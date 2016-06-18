@@ -59,6 +59,7 @@ map = (function () {
 
     // GUI options for rendering modes/effects
     var controls = {
+        'water_level': 200,
         'RESET ALL' : function() {
             window.location.reload();
         },
@@ -152,6 +153,9 @@ map = (function () {
         });
         gui.add(controls, 'scale', 0, 10).name("terrain scale").onChange(function(value) {
             scene.styles.terrain.shaders.uniforms.u_scale = value;
+        });
+        gui.add(controls, 'water_level', -100.0, 500.0).name("sea level").onChange(function(value) {
+            scene.styles.water.shaders.uniforms.water_level = value;
         });
         gui.add(controls, 'DEMO').name("DEMO MODE").onChange(function(value) {
             demo_mode = value;
