@@ -1,6 +1,4 @@
 scene:
-    background:
-        color: black
     animated: true
 
 sources:
@@ -12,29 +10,25 @@ sources:
         type: Raster
         url: https://terrain-preview.mapzen.com/normal/{z}/{x}/{y}.png
         max_zoom: 14
+    stamen-terrain:
+        type: Raster
+        url: http://a.tile.stamen.com/terrain-background/{z}/{x}/{y}.jpg
     elevation:
         type: Raster
         url: https://terrain-preview.mapzen.com/terrarium/{z}/{x}/{y}.png
         max_zoom: 14
 
-# cameras:
-#     camera1:
-#         type: perspective
-#         focal_length: 2 # pairs of [zoom, focal len]
-#         vanishing_point: [-250, -250] # relative to center of screen, in pixels
+cameras:
+    perspective:
+        type: perspective
+        vanishing_point: [0, -500]
 
-# lights:
-#     light1:
-#         type: directional
-#         direction: [0, 1, -.5]
-#         diffuse: '#00ffff'
-#     light2:
-#         type: point
-#         diffuse: '#ff0000'
-#         position: [0, 0, 150px]
-#         origin: ground
-#         attenuation: 10
-#         radius: [0, 500px]
+lights:
+    light1:
+        type: directional
+        direction: [0, 1, -.5]
+        diffuse: .3
+        ambient: 1
 styles: 
     terrain:
         base: raster
@@ -52,36 +46,53 @@ styles:
  
     water:
         base: raster
+        raster: custom
         shaders:
             uniforms:
-                water_level: 200.
+                water_level: 0.
             blocks:
                 global: |
                     float unpack(vec4 h) {
-                        return (h.r * 256. + h.g * 1. + h.b / 256. - 32768.);
+                        // return (h.r * 1. + h.g / 256. + h.b / 65536.)*50.-25.;
+                        return (h.r * 256.  + h.g * 1.  + h.b / 256. - 128.5) * 256.;
+                        // return (h.r * 1.  + h.g / 256.  + h.b / 65536. - 128.);
                     }
                 color: |
-                    float height = unpack(color);
+                    float height = unpack(sampleRaster(0));
                     color = vec4(1.0);
                     
-                    // Color ramps
                     color.rgb = vec3(0.2, 0.2, 1.0);
+                    // Color ramps
                     if(height > water_level ) {
+                        color.rgb = vec3(1.0);
                         color.a = 0.;
                     } else {
-                        color.a = 1.0;
+                        float depth = (water_level - height);
+                        color.a = mix(0.5, 1., depth/5.);
                     }
+
+    buildings:
+        base: polygons
+        shaders:
+            blocks:
+                color: |
+                    color.rgb *= vec3(min((v_world_position.z*.001 + .6),1.));
 layers:
     # terrain:
     #     data: { source: normals, layer: _default }
     #     draw:
     #         terrain:
     #             order: 0
+    terrain:
+        data: { source: stamen-terrain }
+        draw:
+            raster:
+                order: 0 # draw on bottom
     water:
-        data: { source: elevation, layer: _default}
+        data: { source: elevation}
         draw:
             water:
-                order: 0
+                order: 1
 
     earth:
         data: { source: osm }
@@ -101,3 +112,16 @@ layers:
                     fill: white
                     size: 16px
                     stroke: { color: '#444', width: 4px}
+
+    buildings:
+        data: { source: osm }
+        draw:
+            polygons:
+                order: function() { return feature.sort_key; }
+                color: '#fff'
+
+        extruded:
+            draw:
+                polygons:
+                    style: buildings
+                    extrude: function () { return feature.height > 0 || $zoom >= 16; }
