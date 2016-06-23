@@ -96,7 +96,7 @@ map = (function () {
         window.gui = gui;
 
        
-        gui.add(controls, 'water_level', -5.0, 20.0).name("sea level").onChange(function(value) {
+        gui.add(controls, 'water_level', 0.0, 200.0).name("sea level").onChange(function(value) {
             scene.styles.water.shaders.uniforms.water_level = value;
         });
 

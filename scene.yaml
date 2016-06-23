@@ -10,9 +10,19 @@ sources:
         type: Raster
         url: https://terrain-preview.mapzen.com/normal/{z}/{x}/{y}.png
         max_zoom: 14
+    mapquest-open-aerial:
+        type: Raster
+        url: http://otile2.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg
+        max_zoom: 14
     stamen-terrain:
         type: Raster
         url: http://a.tile.stamen.com/terrain-background/{z}/{x}/{y}.jpg
+    mapbox-outdoors:
+        type: Raster
+        url: https://api.mapbox.com/styles/v1/mapbox/outdoors-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibW1hdHRoZXciLCJhIjoiWWdtUWNMayJ9.BxS10-N7uNlhqPwH0daIew
+    mapbox-satellite:
+        type: Raster
+        url: https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibW1hdHRoZXciLCJhIjoiWWdtUWNMayJ9.BxS10-N7uNlhqPwH0daIew
     elevation:
         type: Raster
         url: https://terrain-preview.mapzen.com/terrarium/{z}/{x}/{y}.png
@@ -47,6 +57,7 @@ styles:
     water:
         base: raster
         raster: custom
+        blend: inlay
         shaders:
             uniforms:
                 water_level: 0.
@@ -61,14 +72,14 @@ styles:
                     float height = unpack(sampleRaster(0));
                     color = vec4(1.0);
                     
-                    color.rgb = vec3(0.2, 0.2, 1.0);
+                    color.rgb = vec3(0.07, 0.22, 0.4);
                     // Color ramps
                     if(height > water_level ) {
                         color.rgb = vec3(1.0);
                         color.a = 0.;
                     } else {
                         float depth = (water_level - height);
-                        color.a = mix(0.5, 1., depth/5.);
+                        color.a = mix(0.3, 1., depth/5.);
                     }
 
     buildings:
@@ -84,7 +95,7 @@ layers:
     #         terrain:
     #             order: 0
     terrain:
-        data: { source: stamen-terrain }
+        data: { source: mapquest-open-aerial }
         draw:
             raster:
                 order: 0 # draw on bottom
