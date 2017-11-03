@@ -4,7 +4,7 @@
 map = (function () {
     'use strict';
 
-    var map_start_location = [37.9258, -121.9543, 12]; // NYC
+    var map_start_location = [22.932, 90.631, 9]; // NYC
 
     /*** URL parsing ***/
 
@@ -28,7 +28,7 @@ map = (function () {
     var layer = Tangram.leafletLayer({
         scene: 'scene.yaml',
         preUpdate: preUpdate,
-        attribution: '<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/" target="_blank">Mapzen</a>'
+        attribution: '<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | Esri Satellite | <a href="https://mapzen.com/" target="_blank">Mapzen</a>'
     });
 
     window.layer = layer;
@@ -59,7 +59,8 @@ map = (function () {
 
     // GUI options for rendering modes/effects
     var controls = {
-        'water_level': 0
+        'water_level_coarse': 0,
+        'water_level_fine': 0
     };
     var directional_mouse = false;
     var point_mouse = false;
@@ -96,7 +97,10 @@ map = (function () {
         window.gui = gui;
 
        
-        gui.add(controls, 'water_level', 0.0, 200.0).name("sea level").onChange(function(value) {
+        gui.add(controls, 'water_level_coarse', 0.1, 50.0).name("sea level (coarse)").onChange(function(value) {
+            scene.styles.water.shaders.uniforms.water_level = value;
+        });
+        gui.add(controls, 'water_level_fine', 0.1, 5.0).name("sea level (fine)").onChange(function(value) {
             scene.styles.water.shaders.uniforms.water_level = value;
         });
 

@@ -4,29 +4,26 @@ scene:
 sources:
     osm: 
         type: TopoJSON
-        url: https://vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson
-        max_zoom: 16
+        url: https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson?api_key=mapzen-t3rptXJ
+        max_display_zoom: 14
     normals:
         type: Raster
         url: https://terrain-preview.mapzen.com/normal/{z}/{x}/{y}.png
-        max_zoom: 14
+        max_display_zoom: 14
     mapquest-open-aerial:
         type: Raster
         url: http://otile2.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg
-        max_zoom: 14
+        max_display_zoom: 14
     stamen-terrain:
         type: Raster
         url: http://a.tile.stamen.com/terrain-background/{z}/{x}/{y}.jpg
-    mapbox-outdoors:
-        type: Raster
-        url: https://api.mapbox.com/styles/v1/mapbox/outdoors-v9/tiles/256/{z}/{x}/{y}?access_token=
-    mapbox-satellite:
-        type: Raster
-        url: https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/256/{z}/{x}/{y}?access_token=
     elevation:
         type: Raster
         url: https://tile.mapzen.com/mapzen/terrain/v1/terrarium/{z}/{x}/{y}.png?api_key=mapzen-t3rptXJ
-        max_zoom: 14
+        max_display_zoom: 14
+    esri-satellite:
+        type: Raster
+        url: https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.jpg
 
 cameras:
     perspective:
@@ -95,7 +92,7 @@ layers:
     #         terrain:
     #             order: 0
     terrain:
-        data: { source: mapbox-outdoors }
+        data: { source: esri-satellite }
         draw:
             raster:
                 order: 0 # draw on bottom
@@ -119,6 +116,7 @@ layers:
             kind: [city]
         draw:
             text:
+                order: 2
                 font:
                     fill: white
                     size: 16px
@@ -128,11 +126,11 @@ layers:
         data: { source: osm }
         draw:
             polygons:
-                order: function() { return feature.sort_key; }
+                order: 2
                 color: '#fff'
 
-        extruded:
-            draw:
-                polygons:
-                    style: buildings
-                    extrude: function () { return feature.height > 0 || $zoom >= 16; }
+        # extruded:
+        #     draw:
+        #         polygons:
+        #             style: buildings
+        #             extrude: function () { return feature.height > 0 || $zoom >= 16; }
