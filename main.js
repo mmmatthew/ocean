@@ -97,10 +97,10 @@ map = (function () {
         window.gui = gui;
 
        
-        gui.add(controls, 'water_level_coarse', 0.1, 50.0).name("sea level (coarse)").onChange(function(value) {
+        gui.add(controls, 'water_level_coarse', 0, 100.0).name("sea level [m] (coarse)").onChange(function(value) {
             scene.styles.water.shaders.uniforms.water_level = value;
         });
-        gui.add(controls, 'water_level_fine', 0.1, 5.0).name("sea level (fine)").onChange(function(value) {
+        gui.add(controls, 'water_level_fine', 0, 10.0).name("sea level [m] (fine)").onChange(function(value) {
             scene.styles.water.shaders.uniforms.water_level = value;
         });
 
