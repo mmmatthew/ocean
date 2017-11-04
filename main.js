@@ -4,7 +4,7 @@
 map = (function () {
     'use strict';
 
-    var map_start_location = [22.932, 90.631, 9]; // NYC
+    var map_start_location = [22.932, 90.631, 9]; // BANGLADESH
 
     /*** URL parsing ***/
 
